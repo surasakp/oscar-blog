@@ -5,9 +5,10 @@ RUN mkdir /app
 
 ADD blog /app
 
+ADD appenv /app
+
 WORKDIR /app/
 
-RUN pip install -r requirements.txt
+RUN /bin/sh -c . "/appenv/bin/active"
 
-RUN virtualenv oscar
-RUN . ./oscar/bin/activate
+RUN pip install -r requirements.txt
