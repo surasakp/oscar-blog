@@ -5,10 +5,18 @@ RUN mkdir /app
 
 ADD blog /app
 
-ADD appenv /app
-
 WORKDIR /app/
 
-RUN /bin/sh -c . "/appenv/bin/active"
+RUN pip install virtualenv
 
-RUN pip install -r requirements.txt
+RUN virtualenv -p python3 /appenv && \
+    . /appenv/bin/activate
+
+#RUN pip install -r requirements.txt
+
+RUN pip freeze
+
+# Add entrypoint script
+ADD scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]

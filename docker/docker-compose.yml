@@ -1,5 +1,9 @@
 version: '3'
 
+volumes:
+    appenv:
+        driver: local
+
 services:
   db:
     image: postgres
@@ -8,11 +12,20 @@ services:
     build:
       context: ../
       dockerfile: docker/Dockerfile
-    command: python manage.py runserver 0:8000
+    command: python3 manage.py runserver 0:8000
     volumes:
       - ../blog:/app
-      - ../appenv:/app
+      - appenv:/appenv
     ports:
       - '8000:8000'
+    depends_on:
+      - db
+
+  adhoc:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    volumes:
+      - appenv:/appenv
     depends_on:
       - db
