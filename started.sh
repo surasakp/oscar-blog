@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker-compose -f docker/docker-compose.yml build --pull web_blog adhoc
+docker-compose -f docker/docker-compose.yml build --pull web_blog
 
 docker-compose -f docker/docker-compose.yml run --rm web_blog pip install -r requirements.txt
 
