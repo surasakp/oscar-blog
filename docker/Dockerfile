@@ -9,4 +9,5 @@ WORKDIR /app/
 
 RUN pip install -r requirements.txt
 
+RUN virtualenv oscar
 RUN . ./oscar/bin/activate
