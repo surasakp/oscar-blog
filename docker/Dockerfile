@@ -12,10 +12,6 @@ RUN pip install virtualenv
 RUN virtualenv -p python3 /appenv && \
     . /appenv/bin/activate
 
-#RUN pip install -r requirements.txt
-
-RUN pip freeze
-
 # Add entrypoint script
 ADD scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
