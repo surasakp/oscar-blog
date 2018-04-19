@@ -5,8 +5,6 @@ Develop blog with Oscar framework
 ## Install docker
 - for Ubutu go to this page `https://docs.docker.com/install/linux/docker-ce/ubuntu/` and follow first step
 
-- for Ubutu go to this page `https://docs.docker.com/install/linux/docker-ce/ubuntu/` and follow first step
-
 - for Window go to this page `https://docs.docker.com/docker-for-windows/install/` and follow first step
 
 - for Mac go to this page `https://docs.docker.com/docker-for-mac/install/` and follow first step
