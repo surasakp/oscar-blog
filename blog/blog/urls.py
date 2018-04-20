@@ -24,7 +24,8 @@ urlpatterns = [
 
     # The Django admin is not officially supported; expect breakage.
     # Nonetheless, it's often useful for debugging.
-    url(r'^admin/', include(admin.site.urls)),
+    # url(r'^admin/', include(admin.site.urls)),
 
     url(r'', include(application.urls)),
+    # url(r'^web_blog/', include('web_blog.urls'))
 ]

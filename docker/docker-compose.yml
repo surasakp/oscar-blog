@@ -21,11 +21,11 @@ services:
     depends_on:
       - db
 
-  adhoc:
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
-    volumes:
-      - appenv:/appenv
-    depends_on:
-      - db
+  # adhoc:
+  #   build:
+  #     context: ../
+  #     dockerfile: docker/Dockerfile
+  #   volumes:
+  #     - appenv:/appenv
+  #   depends_on:
+  #     - db
