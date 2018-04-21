@@ -36,10 +36,6 @@ class AbstractPost(Timestamp):
     def __str__(self):
         return 'title : ' + self.title
 
-    def _update_search_text(self):
-        search_fields = filter(bool, [self.title, self.authour])
-        self.search_text = ' '.join(search_fields)
-
 
 class AbstractCategoryGroup(Timestamp):
     post = models.ForeignKey(AbstractPost, on_delete=models.CASCADE)
