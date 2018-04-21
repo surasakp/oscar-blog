@@ -9,6 +9,10 @@ Develop blog with Oscar framework
 
 - for Mac go to this page `https://docs.docker.com/docker-for-mac/install/` and follow first step
 
+## Using Makefile
+- `make -f Makefile start` for start develop environment
+- `make -f Makefile stop` for stop develop environment
+
 ## How to run develop environment
 1 change diractory to folder django_oscar_blog
 
