@@ -27,5 +27,4 @@ urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
 
     url(r'', include(application.urls)),
-    url(r'^blogs/', include('web_blog.urls'))
 ]

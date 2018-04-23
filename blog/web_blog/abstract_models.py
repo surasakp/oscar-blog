@@ -17,8 +17,8 @@ class Timestamp(models.Model):
 class AbstractCategory(Timestamp):
     name = models.CharField(max_length=200)
 
-    class Meta:
-        abstract = True
+    # class Meta:
+    #     abstract = True
 
     def __str__(self):
         return 'name : ' + self.name
@@ -43,8 +43,8 @@ class AbstractPost(Timestamp):
     )
     excerpt = models.CharField(max_length=1000)
 
-    class Meta:
-        abstract = True
+    # class Meta:
+    #     abstract = True
 
     def __str__(self):
         return 'title : ' + self.title
@@ -55,8 +55,8 @@ class AbstractCategoryGroup(Timestamp):
     catagory = models.ForeignKey(AbstractCategory, on_delete=models.CASCADE)
     group = models.CharField(max_length=100)
 
-    class Meta:
-        abstract = True
+    # class Meta:
+    #     abstract = True
 
     def __str__(self):
         return self.group
