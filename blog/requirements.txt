@@ -4,3 +4,4 @@ django-widget-tweaks
 django-oscar==1.5.1
 django-oscar-api==1.3.0
 django-compressor
+flake8
