@@ -3,6 +3,7 @@ from django.db import models
 from oscar.core.compat import AUTH_USER_MODEL
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 # Create your models here.
 
 
@@ -29,8 +30,10 @@ class AbstractPost(Timestamp):
     content = models.CharField(max_length=2000)
     featured_image = models.ImageField(
         _("Featured Image"),
-        upload_to=settings.OSCAR_IMAGE_FOLDER, max_length=255)
-    post_date = models.DateField('date post')
+        upload_to=settings.OSCAR_IMAGE_FOLDER)
+    # blank=True,
+    # null=True)
+    post_date = models.DateField(default=timezone.now)
     authour = models.ForeignKey(
         AUTH_USER_MODEL,
         null=True,

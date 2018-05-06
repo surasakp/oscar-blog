@@ -1,5 +1,5 @@
 DOCKER_COMPOSE_FILE = docker/docker-compose.yml
-PROJECT_NAME = webblog
+PROJECT_NAME = web_blog
 
 .PHONY: init start stop log
 
