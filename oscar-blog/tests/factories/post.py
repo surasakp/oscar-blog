@@ -12,4 +12,4 @@ class PostFactory(factory.DjangoModelFactory):
     excerpt = 'test_excerpt'
 
     class Meta:
-        model = get_model('web_blog', 'Post')
+        model = get_model('appblog', 'Post')

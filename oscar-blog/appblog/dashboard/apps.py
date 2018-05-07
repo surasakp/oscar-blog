@@ -6,9 +6,9 @@ from oscar.core.loading import get_class
 class BlogDashboard(Application):
     name = 'blog-dashboard'
 
-    blog_post_list_view = get_class('web_blog.dashboard.views', 'BlogPostListView')
-    blog_post_detail_update_view = get_class('web_blog.dashboard.views', 'BlogPostDetailUpdateView')
-    blog_post_detail_create_view = get_class('web_blog.dashboard.views', 'BlogPostDetailCreateView')
+    blog_post_list_view = get_class('appblog.dashboard.views', 'BlogPostListView')
+    blog_post_detail_update_view = get_class('appblog.dashboard.views', 'BlogPostDetailUpdateView')
+    blog_post_detail_create_view = get_class('appblog.dashboard.views', 'BlogPostDetailCreateView')
 
     def get_urls(self):
         urls = [

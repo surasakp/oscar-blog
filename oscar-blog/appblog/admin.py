@@ -10,9 +10,9 @@ class PostAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
-Category = get_model('web_blog', 'Category')
-Post = get_model('web_blog', 'Post')
-CategoryGroup = get_model('web_blog', 'CategoryGroup')
+Category = get_model('appblog', 'Category')
+Post = get_model('appblog', 'Post')
+CategoryGroup = get_model('appblog', 'CategoryGroup')
 admin.site.register(Category)
 admin.site.register(Post, PostAdmin)
 admin.site.register(CategoryGroup)
