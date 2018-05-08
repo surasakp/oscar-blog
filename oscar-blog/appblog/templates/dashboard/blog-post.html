@@ -21,9 +21,7 @@
 {% endblock header %}
 
 {% block dashboard_content %}
-    <!-- <div class="table-header">
-        <h3><i class="icon-search icon-large"></i> {% trans "Search posts" %}</h3>
-    </div> -->
+    
     <div class="table-header">
         <a  href="{% url 'blog-dashboard:blog-post-create-detail' %}" class="btn btn-primary btn-lg pull-right"><i class="icon-plus"></i> {% trans "Create new post" %}</a>
     </div>

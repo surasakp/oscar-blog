@@ -1,5 +1,6 @@
-from django import forms
 from oscar.core.loading import get_model
+
+from django import forms
 
 
 class PostForm(forms.ModelForm):

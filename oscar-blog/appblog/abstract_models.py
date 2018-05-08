@@ -1,6 +1,6 @@
-from django.db import models
-
 from oscar.core.compat import AUTH_USER_MODEL
+
+from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone

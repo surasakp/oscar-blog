@@ -1,10 +1,10 @@
+from oscar.core.loading import get_model, get_class
+
 from django.views import generic
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-
-from oscar.core.loading import get_model, get_class
 
 
 Post = get_model('appblog', 'Post')

@@ -1,6 +1,6 @@
-from django.contrib import admin
-
 from oscar.core.loading import get_model
+
+from django.contrib import admin
 
 
 class PostAdmin(admin.ModelAdmin):

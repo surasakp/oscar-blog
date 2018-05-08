@@ -1,10 +1,11 @@
+import tempfile
+from PIL import Image
+
+from oscar.core.loading import get_model
+
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-
-from oscar.core.loading import get_model
-import tempfile
-from PIL import Image
 
 from .factories.post import PostFactory
 
@@ -36,7 +37,7 @@ class WebTestCase(TestCase):
 class TestDashboardPostView(WebTestCase):
 
     def setUp(self):
-        self.postFactory = PostFactory()
+        self.post_factory = PostFactory()
 
     def test_response_status_code_blogspost_should_equal_200(self):
         self.login()
@@ -80,10 +81,10 @@ class TestDashboardPostDetailCreateView(WebTestCase):
 class TestDashboardPostDetailUpdateView(WebTestCase):
 
     def setUp(self):
-        self.postFactory = PostFactory()
+        self.post_factory = PostFactory()
         self.url_post_detail_view = reverse(
             'blog-dashboard:blog-post-detail',
-            kwargs={'post_id': self.postFactory.id}
+            kwargs={'post_id': self.post_factory.id}
         )
 
     def test_response_status_code_blogspost_detail_should_equal_200(self):
@@ -94,7 +95,7 @@ class TestDashboardPostDetailUpdateView(WebTestCase):
     def test_blogspost_detail_should_have_data_we_expect(self):
         self.login()
         response_client = self.client.get(self.url_post_detail_view)
-        self.assertEqual(response_client.context['post'], self.postFactory)
+        self.assertEqual(response_client.context['post'], self.post_factory)
 
     def test_update_data(self):
         self.login()

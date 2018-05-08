@@ -1,6 +1,7 @@
-from django.conf.urls import url
 from oscar.core.application import Application
 from oscar.core.loading import get_class
+
+from django.conf.urls import url
 
 
 class BlogDashboard(Application):
