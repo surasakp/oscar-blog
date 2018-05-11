@@ -1,0 +1,9 @@
+django<1.12,>=1.8.8
+psycopg2-binary
+django-widget-tweaks
+django-oscar
+django-oscar-api
+django-compressor
+flake8
+ipython
+django-nose

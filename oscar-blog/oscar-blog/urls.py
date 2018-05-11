@@ -13,18 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.conf.urls import include, url
 from oscar.app import application
 
-urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+from django.contrib import admin
+from django.conf.urls import include, url
 
+
+urlpatterns = [
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
     # The Django admin is not officially supported; expect breakage.
     # Nonetheless, it's often useful for debugging.
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 
-    url(r'', include(application.urls)),
+    url(r'^', include(application.urls)),
+    url(r'^dashboard/blogs/', include('appblog.urls')),
 ]

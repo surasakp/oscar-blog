@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-import oscar
+
+from django.utils.translation import ugettext_lazy as _
+
 from oscar.defaults import *
 from oscar import OSCAR_MAIN_TEMPLATE_DIR
 from oscar import get_core_apps
-from django.urls import reverse
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,7 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'web_blog.apps.WebBlogConfig',
+    'appblog',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +48,10 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'compressor',
     'widget_tweaks',
-] + get_core_apps()
+    'django_nose'
+] + get_core_apps([])
+
+APPEND_SLASH = True
 
 SITE_ID = 1
 
@@ -60,9 +64,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
-ROOT_URLCONF = 'blog.urls'
+ROOT_URLCONF = 'oscar-blog.urls'
 
 TEMPLATES = [
     {
@@ -88,7 +93,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'blog.wsgi.application'
+WSGI_APPLICATION = 'oscar-blog.wsgi.application'
 
 
 # Database
@@ -144,11 +149,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-MIDDLEWARE_CLASSES = (
-    'oscar.apps.basket.middleware.BasketMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-)
-
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -161,3 +161,16 @@ HAYSTACK_CONNECTIONS = {
 }
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+# append children at menu content on dashboard oscar
+OSCAR_DASHBOARD_NAVIGATION[5]['children'].extend([
+    {
+        'label': _('Blog Posts'),
+        'url_name': 'blog-dashboard:blog-post-list',
+    },
+    {
+        'label': _('Blog Categorys'),
+        'url_name': 'dashboard:reviews-list',
+    }]
+)

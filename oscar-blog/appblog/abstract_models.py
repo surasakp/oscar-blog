@@ -1,12 +1,14 @@
-from django.db import models
-
 from oscar.core.compat import AUTH_USER_MODEL
+
+from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 # Create your models here.
 
 
 class Timestamp(models.Model):
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -15,48 +17,32 @@ class Timestamp(models.Model):
 
 
 class AbstractCategory(Timestamp):
+
     name = models.CharField(max_length=200)
 
-    # class Meta:
-    #     abstract = True
-
     def __str__(self):
-        return 'name : ' + self.name
+        return self.name
 
 
 class AbstractPost(Timestamp):
+
     title = models.CharField(max_length=200)
     content = models.CharField(max_length=2000)
-    featured_image = models.ImageField(
-        _("Featured Image"),
-        upload_to=settings.OSCAR_IMAGE_FOLDER, max_length=255)
-    post_date = models.DateField('date post')
-    authour = models.ForeignKey(
-        AUTH_USER_MODEL,
-        null=True,
-        on_delete=models.CASCADE)
+    featured_image = models.ImageField(_("Featured Image"), upload_to=settings.OSCAR_IMAGE_FOLDER)
+    post_date = models.DateField(default=timezone.now)
+    authour = models.ForeignKey(AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     category = models.ManyToManyField(
-        AbstractCategory,
-        blank=True,
-        through='AbstractCategoryGroup',
-        verbose_name=_("Category")
-    )
+        AbstractCategory, blank=True, through='AbstractCategoryGroup', verbose_name=_("Category"))
     excerpt = models.CharField(max_length=1000)
 
-    # class Meta:
-    #     abstract = True
-
     def __str__(self):
-        return 'title : ' + self.title
+        return self.title
 
 
 class AbstractCategoryGroup(Timestamp):
     post = models.ForeignKey(AbstractPost, on_delete=models.CASCADE)
     catagory = models.ForeignKey(AbstractCategory, on_delete=models.CASCADE)
     group = models.CharField(max_length=100)
-
-    # class Meta:
-    #     abstract = True
 
     def __str__(self):
         return self.group

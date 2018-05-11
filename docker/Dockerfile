@@ -3,7 +3,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN mkdir /app
 
-ADD blog /app
+ADD oscar-blog /app
 
 WORKDIR /app/
 

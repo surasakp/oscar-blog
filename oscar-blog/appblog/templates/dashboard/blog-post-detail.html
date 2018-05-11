@@ -1,0 +1,93 @@
+{% extends 'dashboard/layout.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Dashboard" %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+        </li>
+        <li>
+            <a href="{% url 'blog-dashboard:blog-post-list' %}">{% trans "Post" %}</a>
+        </li>
+        <li class="active">{% trans post.title %}</li>
+    </ul>
+{% endblock %}
+
+{% block header %}
+    <div class="page-header action">
+        <h1>{% trans post.title %}</h1>
+    </div>
+{% endblock header %}
+
+{% block dashboard_content %}
+    <form method="post" class="form-stacked wysiwyg fixed-actions" enctype="multipart/form-data" data-behaviour="affix-nav-errors" autocomplete="off">
+        {% csrf_token %}
+        <div class="row">
+            {% block tab_nav %}
+                <div class="col-md-3">
+                    <div data-spy="affix" class="affix-top" data-offset-top="200">
+                        <div class="table-header">
+                            <h3>{% trans "Sections" %}</h3>
+                        </div>
+                        <ul class="nav nav-list bs-docs-sidenav" id="post_update_tabs">
+                            {% block tabs %}
+                                <li class="active"><a data-toggle="tab">{% trans 'Post details' %}</a></li>
+                            {% endblock tabs %}
+                        </ul>
+                    </div>
+                </div>
+            {% endblock tab_nav %}
+
+            <div class="col-md-9">
+                <div class="tab-content">
+                    {% block tab_content %}
+                        {% block post_detail %}
+                            <div class="tab-pane active" id="post_detail">
+                                <div class="table-header">
+                                    <h3>{% trans "Post details" %}</h3>
+                                </div>
+                                <div class="well product-details">
+                                    {% block post_detail_content %}
+                                        <span class="error-block">{{ form.non_field_errors }}</span>
+                                        {% for field in form.hidden_fields %}
+                                            {{ field }}
+                                        {% endfor %}
+
+                                        {% for field in form.visible_fields %}
+                                            {% if 'attr' not in field.id_for_label %}
+                                                {% include 'dashboard/partials/form_field.html' with field=field %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endblock post_detail_content %}
+                                </div>
+                            </div>
+                        {% endblock post_detail %}
+                    {% endblock tab_content %}
+                </div>
+            </div>
+        </div>
+
+        {% block fixed_actions_group %}
+            <div class="fixed-actions-group">
+                <div class="form-group">
+                    <div class="pull-right">
+                        <a href="{% url 'blog-dashboard:blog-post-list' %}">
+                            {% trans "Cancel" %}
+                        </a>
+                        {% trans "or" %}
+                        <button class="btn btn-default btn-lg" name="action" type="submit" value="continue" data-loading-text="{% trans 'Saving...' %}">
+                            {% trans "Save and continue editing" %}
+                        </button>
+                        <button class="btn btn-primary btn-lg" name="action" type="submit" value="save" data-loading-text="{% trans 'Saving...' %}">
+                            {% trans "Save" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endblock fixed_actions_group %}
+    </form>
+{% endblock dashboard_content %}
