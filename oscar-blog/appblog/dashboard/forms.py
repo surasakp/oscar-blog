@@ -32,3 +32,22 @@ class PostSearchForm(forms.Form):
         cleaned_data['title'] = cleaned_data['title']
         cleaned_data['author'] = cleaned_data['author']
         return cleaned_data
+
+
+class CategoryForm(forms.ModelForm):
+
+    class Meta:
+        model = get_model('appblog', 'Category')
+        fields = ['name']
+
+
+class CategorySearchForm(forms.Form):
+    name = forms.CharField(required=False, label=_("Name"))
+
+    class Meta:
+        fields = ['name']
+
+    def clean(self):
+        cleaned_data = super(CategorySearchForm, self).clean()
+        cleaned_data['name'] = cleaned_data['name']
+        return cleaned_data

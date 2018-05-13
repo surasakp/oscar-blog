@@ -52,14 +52,14 @@ class TestDashboardPostView(WebTestCase):
     def test_blog_post_have_not_queryset(self):
         self.login()
         response = self.client.get('/dashboard/blogs/post/')
-        data_context = response.context['posts']
+        data_context = response.context['posts']    
         self.assertQuerysetEqual(data_context, ['<Post: {}>'.format(self.post_factory.title)])
 
     def test_search_blog_post_from_title_should_have_expected_data(self):
         self.login()
 
         response = self.client.get(
-            '/dashboard/blogs/post/?title={}&author=&country=&search='.format(self.post_factory.title))
+            '/dashboard/blogs/post/?title={}&author=&action=search'.format(self.post_factory.title))
 
         expected_data = ['<Post: {}>'.format(self.post_factory.title)]
         self.assertEquals(response.status_code, 200)
@@ -69,7 +69,7 @@ class TestDashboardPostView(WebTestCase):
         self.login()
 
         response = self.client.get(
-            '/dashboard/blogs/post/?title=&author={}&country=&search='.format(self.post_factory.author))
+            '/dashboard/blogs/post/?title=&author={}&action=search'.format(self.post_factory.author))
 
         expected_data = ['<Post: {}>'.format(self.post_factory.title)]
         self.assertEquals(response.status_code, 200)
@@ -161,4 +161,83 @@ class TestDashboardPostDetailDeleteView(WebTestCase):
             kwargs={'pk': post_factory.id}
         )
         response = self.client.post(url_post_delete_view)
+        self.assertEqual(response.status_code, 302)
+
+
+class TestDashboardCategoryListView(WebTestCase):
+
+    def setUp(self):
+        self.category_factory = CategoryFactory()
+        self.url_category_list_view = reverse('blog-dashboard:blog-category-list')
+
+    def test_response_status_code_category_list_view_should_equal_200(self):
+        self.login()
+        response = self.client.get(self.url_category_list_view)
+        self.assertEqual(response.status_code, 200)
+
+    def test_search_blog_category_from_name_should_have_expected_data(self):
+        self.login()
+
+        response = self.client.get(
+            self.url_category_list_view + '?name={}&action=search'.format(self.category_factory.name))
+
+        expected_data = ['<Category: {}>'.format(self.category_factory.name)]
+        self.assertEquals(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['categoires'], expected_data)
+
+
+class TestDashboardCategoryCreateView(WebTestCase):
+
+    def setUp(self):
+        self.url_category_create_view = reverse('blog-dashboard:blog-category-detail-create')
+
+    def test_response_status_code_category_create_view_should_equal_200(self):
+        self.login()
+        response = self.client.get(self.url_category_create_view)
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_data(self):
+        data = {
+            'name': 'category name',
+            'action': 'save'
+        }
+        response = self.client.post(self.url_category_create_view, data=data)
+        self.assertEqual(response.status_code, 302)
+
+
+class TestDashboardCategoryUpdateView(WebTestCase):
+
+    def setUp(self):
+        self.category_factory = CategoryFactory()
+        self.url_category_update_view = reverse(
+            'blog-dashboard:blog-category-detail-update', kwargs={'pk': self.category_factory.id})
+
+    def test_response_status_code_category_update_view_should_equal_200(self):
+        self.login()
+        response = self.client.get(self.url_category_update_view)
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_data(self):
+        data = {
+            'name': 'category name',
+            'action': 'save'
+        }
+        response = self.client.post(self.url_category_update_view, data=data)
+        self.assertEqual(response.status_code, 302)
+
+
+class TestDashboardCategoryDeleteView(WebTestCase):
+
+    def setUp(self):
+        self.category_factory = CategoryFactory()
+        self.url_category_delete_view = reverse(
+            'blog-dashboard:blog-category-detail-delete', kwargs={'pk': self.category_factory.id})
+
+    def test_response_status_code_category_delete_view_should_equal_200(self):
+        self.login()
+        response = self.client.get(self.url_category_delete_view)
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_data(self):
+        response = self.client.post(self.url_category_delete_view)
         self.assertEqual(response.status_code, 302)

@@ -9,6 +9,8 @@ CategoryGroup = get_model('appblog', 'CategoryGroup')
 
 CategoryGroupForm = get_class('appblog.dashboard.forms', 'CategoryGroupForm')
 PostSearchForm = get_class('appblog.dashboard.forms', 'PostSearchForm')
+CategoryForm = get_class('appblog.dashboard.forms', 'CategoryForm')
+CategorySearchForm = get_class('appblog.dashboard.forms', 'CategorySearchForm')
 
 CategoryGroupFormSet = get_class('appblog.dashboard.formsets', 'CategoryGroupFormSet')
 
@@ -110,7 +112,7 @@ class TestDashboardCategoryGroupFormSet(TestCase):
         self.assertEqual(forms.errors, required_fields)
 
 
-class TestDashboardSearchPostForm(TestCase):
+class TestDashboardPostSearchForm(TestCase):
 
     def setUp(self):
         self.form = PostSearchForm
@@ -125,5 +127,54 @@ class TestDashboardSearchPostForm(TestCase):
             'author': 'admin'
         }
         form = self.form(data=data)
+        self.assertTrue(form.is_valid())
         self.assertEqual(form.data['title'], data['title'])
         self.assertEqual(form.data['author'], data['author'])
+
+    def test_should_have_not_required_fields_when_no_data(self):
+        data = {
+            'title': '',
+            'author': ''
+        }
+        form = self.form(data=data)
+        self.assertTrue(form.is_valid())
+        required_message = {}
+        self.assertEqual(form.errors, required_message)
+
+
+class TestDashboardCategoryForm(TestCase):
+
+    def setUp(self):
+        self.form = CategoryForm
+
+    def test_should_have_fields_that_we_expect(self):
+        expected_fields = ['name']
+        self.assertEqual(self.form.Meta.fields, expected_fields)
+
+    def test_should_have_not_required_fields_when_no_data(self):
+        data = {
+            'name': ''
+        }
+        form = self.form(data=data)
+        self.assertFalse(form.is_valid())
+        required_message = {'name': ['This field is required.']}
+        self.assertEqual(form.errors, required_message)
+
+
+class TestDashboardCategorySearchForm(TestCase):
+
+    def setUp(self):
+        self.form = CategorySearchForm
+
+    def test_should_have_fields_that_we_expect(self):
+        expected_fields = ['name']
+        self.assertEqual(self.form.Meta.fields, expected_fields)
+
+    def test_should_have_not_required_fields_when_no_data(self):
+        data = {
+            'name': ''
+        }
+        form = self.form(data)
+        self.assertTrue(form.is_valid())
+        required_message = {}
+        self.assertEqual(form.errors, required_message)

@@ -23,6 +23,10 @@ class AbstractCategory(Timestamp):
     def __str__(self):
         return self.name
 
+    @property
+    def get_number_posts(self):
+        return AbstractCategoryGroup.objects.filter(category__name=self.name).count()
+
 
 class AbstractPost(Timestamp):
 
