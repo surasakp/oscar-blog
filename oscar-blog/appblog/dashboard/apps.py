@@ -6,6 +6,15 @@ from django.conf.urls import url
 
 class BlogDashboard(Application):
     name = 'blog-dashboard'
+    permissions_map = {
+        'blog-post-detail-update': (['is_staff'], ['partner.dashboard_access']),
+        'blog-post-detail-create': (['is_staff'], ['partner.dashboard_access']),
+        'blog-post-detail-delete': (['is_staff'], ['partner.dashboard_access']),
+
+        'blog-category-detail-update': (['is_staff'], ['partner.dashboard_access']),
+        'blog-category-detail-create': (['is_staff'], ['partner.dashboard_access']),
+        'blog-category-detail-delete': (['is_staff'], ['partner.dashboard_access']),
+    }
 
     blog_post_list_view = get_class('appblog.dashboard.views', 'BlogPostListView')
     blog_post_detail_update_view = get_class('appblog.dashboard.views', 'BlogPostDetailUpdateView')
@@ -22,11 +31,11 @@ class BlogDashboard(Application):
             url(r'^post/$',
                 self.blog_post_list_view.as_view(), name='blog-post-list'),
             url(r'^post/update/detail/(?P<id>\d+)/$',
-                self.blog_post_detail_update_view.as_view(), name='blog-post-detail'),
+                self.blog_post_detail_update_view.as_view(), name='blog-post-detail-update'),
             url(r'^post/create/detail/$',
-                self.blog_post_detail_create_view.as_view(), name='blog-post-create-detail'),
+                self.blog_post_detail_create_view.as_view(), name='blog-post-detail-create'),
             url(r'^post/delete/(?P<pk>\d+)/$',
-                self.blog_post_detail_delete_view.as_view(), name='blog-post-delete-detail'),
+                self.blog_post_detail_delete_view.as_view(), name='blog-post-detail-delete'),
 
             url(r'^category/$', self.blog_category_list_view.as_view(), name='blog-category-list'),
             url(r'^category/detail/create/$',

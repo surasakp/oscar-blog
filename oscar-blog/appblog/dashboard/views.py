@@ -65,7 +65,6 @@ class BlogPostDetailUpdateView(generic.UpdateView):
 
     def process_all_forms(self, form):
         formset = self.category_formset_class(self.request.POST, instance=self.object)
-        print('form in view : ', formset.is_valid(), formset.errors)
         is_valid = form.is_valid() and formset.is_valid()
         if is_valid:
             return self.forms_valid(form, formset)
@@ -93,7 +92,7 @@ class BlogPostDetailUpdateView(generic.UpdateView):
         action = self.request.POST.get('action')
         if action == 'continue':
             url = reverse(
-                'blog-dashboard:blog-post-detail', kwargs={"id": self.object.id})
+                'blog-dashboard:blog-post-detail-update', kwargs={"id": self.object.id})
         else:
             url = reverse('blog-dashboard:blog-post-list')
         return url
@@ -141,7 +140,7 @@ class BlogPostDetailCreateView(generic.CreateView):
 
         action = self.request.POST.get('action')
         if action == 'continue':
-            return reverse('blog-dashboard:blog-post-detail', kwargs={'id': self.object.id})
+            return reverse('blog-dashboard:blog-post-detail-update', kwargs={'id': self.object.id})
         else:
             return reverse('blog-dashboard:blog-post-list')
 

@@ -7,11 +7,11 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-from .factories.post import PostFactory
-from .factories.category import CategoryFactory
+from .factories.blogs import (PostFactory, CategoryFactory, CategoryGroupFactory)
 
 Post = get_model('appblog', 'Post')
 Category = get_model('appblog', 'Category')
+CategoryGroup = get_model('appblog', 'CategoryGroup')
 
 
 class WebTestCase(TestCase):
@@ -21,7 +21,21 @@ class WebTestCase(TestCase):
     def login(self):
         self.user = User.objects.create(username=self.username)
         self.user.set_password(self.password)
+        self.user.is_staff = True
         self.user.save()
+
+        self.client = Client()
+        self.client.login(
+            username=self.username,
+            password=self.password
+        )
+
+    def login_with_is_not_staff(self):
+        self.user = User.objects.create(username=self.username)
+        self.user.set_password(self.password)
+        self.user.is_staff = False
+        self.user.save()
+
         self.client = Client()
         self.client.login(
             username=self.username,
@@ -52,7 +66,7 @@ class TestDashboardPostView(WebTestCase):
     def test_blog_post_have_not_queryset(self):
         self.login()
         response = self.client.get('/dashboard/blogs/post/')
-        data_context = response.context['posts']    
+        data_context = response.context['posts']
         self.assertQuerysetEqual(data_context, ['<Post: {}>'.format(self.post_factory.title)])
 
     def test_search_blog_post_from_title_should_have_expected_data(self):
@@ -80,17 +94,22 @@ class TestDashboardPostDetailCreateView(WebTestCase):
 
     def setUp(self):
         self.category_factory = CategoryFactory()
-        self.url_post_create_detail_view = reverse('blog-dashboard:blog-post-create-detail')
+        self.url_post_create_detail_view = reverse('blog-dashboard:blog-post-detail-create')
 
     def test_response_status_code_blogspost_create_detail_should_equal_200(self):
         self.login()
         response_client = self.client.get(self.url_post_create_detail_view)
         self.assertEqual(response_client.status_code, 200)
 
-    def test_create_data(self):
+    def test_post_detail_create_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get(self.url_post_create_detail_view)
+        self.assertEqual(response_client.status_code, 403)
+
+    def test_post_detail_create_view_should_create_data_in_db(self):
         self.login()
         data = {
-            'title': 'Test create new post',
+            'title': 'Test create post',
             'content': 'example content',
             'author': self.user.id,
             'excerpt': 'example excerpt',
@@ -105,6 +124,14 @@ class TestDashboardPostDetailCreateView(WebTestCase):
         response = self.client.post(self.url_post_create_detail_view, data=data)
         self.assertEqual(response.status_code, 302)
 
+        expect_post = Post.objects.all().get(title=data['title'])
+        self.assertEqual(expect_post.content, data['content'])
+        self.assertEqual(expect_post.author, self.user)
+        self.assertEqual(expect_post.excerpt, data['excerpt'])
+        self.assertQuerysetEqual(
+            expect_post.abstractcategorygroup_set.all().filter(post__title=data['title']),
+            ['<AbstractCategoryGroup: {}-{}>'.format(expect_post, self.category_factory)])
+
 
 class TestDashboardPostDetailUpdateView(WebTestCase):
 
@@ -112,24 +139,29 @@ class TestDashboardPostDetailUpdateView(WebTestCase):
         self.post_factory = PostFactory()
         self.category_factory = CategoryFactory()
         self.url_post_detail_view = reverse(
-            'blog-dashboard:blog-post-detail',
+            'blog-dashboard:blog-post-detail-update',
             kwargs={'id': self.post_factory.id}
         )
 
-    def test_response_status_code_blogspost_detail_should_equal_200(self):
+    def test_response_status_code_post_detail_update_view_should_equal_200(self):
         self.login()
         response_client = self.client.get(self.url_post_detail_view)
         self.assertEqual(response_client.status_code, 200)
+
+    def test_post_detail_update_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get(self.url_post_detail_view)
+        self.assertEqual(response_client.status_code, 403)
 
     def test_blogspost_detail_should_have_data_we_expect(self):
         self.login()
         response_client = self.client.get(self.url_post_detail_view)
         self.assertEqual(response_client.context['post'], self.post_factory)
 
-    def test_update_data(self):
+    def test_post_detail_update_view_should_update_data_in_db(self):
         self.login()
         data = {
-            'title': 'Test Blog',
+            'title': 'Test update post',
             'content': 'example content',
             'author': self.user.id,
             'excerpt': 'example excerpt',
@@ -144,24 +176,42 @@ class TestDashboardPostDetailUpdateView(WebTestCase):
         response = self.client.post(self.url_post_detail_view, data=data)
         self.assertEqual(response.status_code, 302)
 
-        expect_data = Post.objects.get(title=data['title'])
+        expect_data = Post.objects.get(id=self.post_factory.id)
         self.assertEqual(expect_data.content, data['content'])
         self.assertEqual(expect_data.author, self.user)
         self.assertEqual(expect_data.excerpt, data['excerpt'])
+        self.assertQuerysetEqual(
+            expect_data.abstractcategorygroup_set.all().filter(post__title=data['title']),
+            ['<AbstractCategoryGroup: {}-{}>'.format(expect_data, self.category_factory)])
 
 
 class TestDashboardPostDetailDeleteView(WebTestCase):
 
-    def test_delete_data(self):
-        self.login()
-        post_factory = PostFactory()
-
-        url_post_delete_view = reverse(
-            'blog-dashboard:blog-post-delete-detail',
-            kwargs={'pk': post_factory.id}
+    def setUp(self):
+        self.post_factory = PostFactory()
+        self.url_post_delete_view = reverse(
+            'blog-dashboard:blog-post-detail-delete',
+            kwargs={'pk': self.post_factory.id}
         )
-        response = self.client.post(url_post_delete_view)
+
+    def test_post_detail_delete_view_should_delete_data_in_db(self):
+        self.login()
+        category_factory = CategoryFactory()
+        category_group_factory = CategoryGroupFactory(post=self.post_factory, category=category_factory)
+
+        response = self.client.post(self.url_post_delete_view)
         self.assertEqual(response.status_code, 302)
+
+        with self.assertRaises(Post.DoesNotExist):
+            Post.objects.get(id=self.post_factory.id)
+
+        with self.assertRaises(CategoryGroup.DoesNotExist):
+            CategoryGroup.objects.get(id=category_group_factory.id)
+
+    def test_post_detail_delete_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get(self.url_post_delete_view)
+        self.assertEqual(response_client.status_code, 403)
 
 
 class TestDashboardCategoryListView(WebTestCase):
@@ -196,13 +246,22 @@ class TestDashboardCategoryCreateView(WebTestCase):
         response = self.client.get(self.url_category_create_view)
         self.assertEqual(response.status_code, 200)
 
-    def test_create_data(self):
+    def test_category_create_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get(self.url_category_create_view)
+        self.assertEqual(response_client.status_code, 403)
+
+    def test_category_create_view_should_create_data_in_db(self):
+        self.login()
         data = {
             'name': 'category name',
             'action': 'save'
         }
         response = self.client.post(self.url_category_create_view, data=data)
         self.assertEqual(response.status_code, 302)
+
+        category = Category.objects.get(name=data['name'])
+        self.assertEqual(category.name, data['name'])
 
 
 class TestDashboardCategoryUpdateView(WebTestCase):
@@ -217,13 +276,22 @@ class TestDashboardCategoryUpdateView(WebTestCase):
         response = self.client.get(self.url_category_update_view)
         self.assertEqual(response.status_code, 200)
 
-    def test_update_data(self):
+    def test_category_update_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get(self.url_category_update_view)
+        self.assertEqual(response_client.status_code, 403)
+
+    def test_category_update_view_should_update_data_in_db(self):
+        self.login()
         data = {
-            'name': 'category name',
+            'name': 'edit name',
             'action': 'save'
         }
         response = self.client.post(self.url_category_update_view, data=data)
         self.assertEqual(response.status_code, 302)
+
+        category = Category.objects.get(name=data['name'])
+        self.assertEqual(category.name, data['name'])
 
 
 class TestDashboardCategoryDeleteView(WebTestCase):
@@ -238,6 +306,15 @@ class TestDashboardCategoryDeleteView(WebTestCase):
         response = self.client.get(self.url_category_delete_view)
         self.assertEqual(response.status_code, 200)
 
-    def test_delete_data(self):
+    def test_category_delete_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get(self.url_category_delete_view)
+        self.assertEqual(response_client.status_code, 403)
+
+    def test_category_delete_view_should_delete_data_in_db(self):
+        self.login()
         response = self.client.post(self.url_category_delete_view)
         self.assertEqual(response.status_code, 302)
+
+        with self.assertRaises(Category.DoesNotExist):
+            Category.objects.get(id=self.category_factory.id)

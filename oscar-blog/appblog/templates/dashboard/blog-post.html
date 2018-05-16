@@ -16,7 +16,7 @@
 
 {% block header %}
     <div class="page-header">
-        <a  href="{% url 'blog-dashboard:blog-post-create-detail' %}" class="btn btn-primary btn-lg pull-right"><i class="icon-plus"></i> {% trans "Create new post" %}</a>
+        <a  href="{% url 'blog-dashboard:blog-post-detail-create' %}" class="btn btn-primary btn-lg pull-right"><i class="icon-plus"></i> {% trans "Create new post" %}</a>
         <h1>{% trans "Post" %}</h1>
     </div>
 {% endblock header %}
@@ -48,7 +48,7 @@
         </tr>
         {% for post in posts %}
             <tr>
-                <td><a href="{% url 'blog-dashboard:blog-post-detail' post.id%}">{{ post.title }}</a></td>
+                <td><a href="{% url 'blog-dashboard:blog-post-detail-update' post.id%}">{{ post.title }}</a></td>
                 <td>{{ post.featured_image }}</td>
                 <td>{{ post.post_date }}</td>
                 <td>{{ post.author }}</td>
@@ -62,10 +62,10 @@
                             </button>
                             <ul class="dropdown-menu pull-right">
                                 <li>
-                                    <a href="{% url 'blog-dashboard:blog-post-detail' id=post.id%}">{% trans "Edit" %}</a>
+                                    <a href="{% url 'blog-dashboard:blog-post-detail-update' id=post.id%}">{% trans "Edit" %}</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'blog-dashboard:blog-post-delete-detail' pk=post.id%}">{% trans "Delete" %}</a>
+                                    <a href="{% url 'blog-dashboard:blog-post-detail-delete' pk=post.id%}">{% trans "Delete" %}</a>
                                 </li>
                             </ul>
                         </div>
