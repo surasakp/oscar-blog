@@ -57,20 +57,21 @@ class TestDashboardPostView(WebTestCase):
         user.set_password('post12345')
         user.save()
         self.post_factory = PostFactory(author=user)
+        self.url_post_view = reverse('blog-dashboard:blog-post-list')
 
     def test_response_status_code_blogspost_should_equal_200(self):
         self.login()
-        response = self.client.get('/dashboard/blogs/post/')
+        response = self.client.get(self.url_post_view)
         self.assertEqual(response.status_code, 200)
 
     def test_post_view_login_user_is_not_staff_should_equal_403(self):
         self.login_with_is_not_staff()
-        response_client = self.client.get('/dashboard/blogs/post/')
+        response_client = self.client.get(self.url_post_view)
         self.assertEqual(response_client.status_code, 403)
 
     def test_blog_post_have_not_queryset(self):
         self.login()
-        response = self.client.get('/dashboard/blogs/post/')
+        response = self.client.get(self.url_post_view)
         data_context = response.context['posts']
         self.assertQuerysetEqual(data_context, ['<Post: {}>'.format(self.post_factory.title)])
 
@@ -78,7 +79,7 @@ class TestDashboardPostView(WebTestCase):
         self.login()
 
         response = self.client.get(
-            '/dashboard/blogs/post/?title={}&author=&action=search'.format(self.post_factory.title))
+            self.url_post_view + '?title={}&author=&action=search'.format(self.post_factory.title))
 
         expected_data = ['<Post: {}>'.format(self.post_factory.title)]
         self.assertEquals(response.status_code, 200)
@@ -88,7 +89,7 @@ class TestDashboardPostView(WebTestCase):
         self.login()
 
         response = self.client.get(
-            '/dashboard/blogs/post/?title=&author={}&action=search'.format(self.post_factory.author))
+            self.url_post_view + '?title=&author={}&action=search'.format(self.post_factory.author))
 
         expected_data = ['<Post: {}>'.format(self.post_factory.title)]
         self.assertEquals(response.status_code, 200)
