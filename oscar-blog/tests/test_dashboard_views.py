@@ -63,6 +63,11 @@ class TestDashboardPostView(WebTestCase):
         response = self.client.get('/dashboard/blogs/post/')
         self.assertEqual(response.status_code, 200)
 
+    def test_post_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get('/dashboard/blogs/post/')
+        self.assertEqual(response_client.status_code, 403)
+
     def test_blog_post_have_not_queryset(self):
         self.login()
         response = self.client.get('/dashboard/blogs/post/')
@@ -224,6 +229,11 @@ class TestDashboardCategoryListView(WebTestCase):
         self.login()
         response = self.client.get(self.url_category_list_view)
         self.assertEqual(response.status_code, 200)
+
+    def test_category_view_login_user_is_not_staff_should_equal_403(self):
+        self.login_with_is_not_staff()
+        response_client = self.client.get(self.url_category_list_view)
+        self.assertEqual(response_client.status_code, 403)
 
     def test_search_blog_category_from_name_should_have_expected_data(self):
         self.login()

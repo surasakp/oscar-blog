@@ -6,15 +6,7 @@ from django.conf.urls import url
 
 class BlogDashboard(Application):
     name = 'blog-dashboard'
-    permissions_map = {
-        'blog-post-detail-update': (['is_staff'], ['partner.dashboard_access']),
-        'blog-post-detail-create': (['is_staff'], ['partner.dashboard_access']),
-        'blog-post-detail-delete': (['is_staff'], ['partner.dashboard_access']),
-
-        'blog-category-detail-update': (['is_staff'], ['partner.dashboard_access']),
-        'blog-category-detail-create': (['is_staff'], ['partner.dashboard_access']),
-        'blog-category-detail-delete': (['is_staff'], ['partner.dashboard_access']),
-    }
+    default_permissions = ['is_staff', ]
 
     blog_post_list_view = get_class('appblog.dashboard.views', 'BlogPostListView')
     blog_post_detail_update_view = get_class('appblog.dashboard.views', 'BlogPostDetailUpdateView')
