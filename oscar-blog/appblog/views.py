@@ -3,9 +3,11 @@ import datetime
 from oscar.core.loading import get_model
 
 from django.views import generic
+from django.core.exceptions import ObjectDoesNotExist
 
 Post = get_model('appblog', 'Post')
 Category = get_model('appblog', 'Category')
+CategoryGroup = get_model('appblog', 'CategoryGroup')
 
 
 class BlogPostView(generic.ListView):
@@ -23,7 +25,7 @@ class BlogPostView(generic.ListView):
         return Post.objects.filter(post_date__lte=datetime.date.today())
 
     def get_categories(self):
-        return Category.objects.all()
+        return Category.objects.all().filter(abstractpost__post_date__lte=datetime.date.today())
 
     def get_queryset(self):
         queryset = self.get_posts_published()
@@ -40,7 +42,7 @@ class BlogPostView(generic.ListView):
         return queryset
 
 
-class BlogPostDetailDetailView(generic.DetailView):
+class BlogPostDetailView(generic.DetailView):
 
     template_name = 'appblog/blog-post-detail.html'
     model = Post
@@ -52,10 +54,16 @@ class BlogPostDetailDetailView(generic.DetailView):
         return context
 
     def get_object(self, queryset=None):
-        return Post.objects.get(slug=self.kwargs['slug'])
+        post = {}
+        try:
+            post = Post.objects.get(post_date__lte=datetime.date.today(), slug=self.kwargs['slug'])
+        except ObjectDoesNotExist:
+            return {}
+
+        return post
 
     def get_categories(self):
-        return Category.objects.all()
+        return Category.objects.all().filter(abstractpost__post_date__lte=datetime.date.today())
 
 
 class BlogCategoryView(generic.ListView):
@@ -71,7 +79,8 @@ class BlogCategoryView(generic.ListView):
         return context
 
     def get_categories(self):
-        return Category.objects.all()
+        return Category.objects.all().filter(abstractpost__post_date__lte=datetime.date.today())
 
     def get_posts_published_by_category(self):
-        return Post.objects.all().filter(abstractcategorygroup__category__slug=self.kwargs['slug'])
+        return Post.objects.all().filter(
+            post_date__lte=datetime.date.today(), abstractcategorygroup__category__slug=self.kwargs['slug'])

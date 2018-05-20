@@ -8,7 +8,7 @@ class AppBlog(Application):
     name = 'appblog'
 
     blog_post_index_view = get_class('appblog.views', 'BlogPostView')
-    blog_post_detail_view = get_class('appblog.views', 'BlogPostDetailDetailView')
+    blog_post_detail_view = get_class('appblog.views', 'BlogPostDetailView')
     blog_category_view = get_class('appblog.views', 'BlogCategoryView')
 
     def get_urls(self):

@@ -1,12 +1,10 @@
-import tempfile
-from PIL import Image
-
 from oscar.core.loading import get_model, get_class
 
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from .factories.blogs import (PostFactory, CategoryFactory)
+from .util import Util
 
 
 Post = get_model('appblog', 'Post')
@@ -20,6 +18,8 @@ CategoryForm = get_class('appblog.dashboard.forms', 'CategoryForm')
 CategorySearchForm = get_class('appblog.dashboard.forms', 'CategorySearchForm')
 
 CategoryGroupFormSet = get_class('appblog.dashboard.formsets', 'CategoryGroupFormSet')
+
+util = Util()
 
 
 class TestDashboardPostForm(TestCase):
@@ -49,14 +49,7 @@ class TestDashboardPostForm(TestCase):
 
     def test_post_form_save_data_should_have_data_in_db(self):
 
-        def create_image():
-            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
-                image = Image.new('RGB', (200, 200), 'white')
-                image.save(f, 'PNG')
-
-            return open(f.name, mode='rb')
-
-        upload_file = create_image()
+        upload_file = util.create_image()
         image = {'featured_image': SimpleUploadedFile(upload_file.name, upload_file.read())}
         data = {
             'title': 'post',
@@ -130,14 +123,7 @@ class TestDashboardCategoryGroupFormSet(TestCase):
 
     def test_category_group_formset_save_data_should_have_data_in_db(self):
 
-        def create_image():
-            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
-                image = Image.new('RGB', (200, 200), 'white')
-                image.save(f, 'PNG')
-
-            return open(f.name, mode='rb')
-
-        upload_file = create_image()
+        upload_file = util.create_image()
         category = CategoryFactory(name='Test Category1')
         post = PostFactory(featured_image=SimpleUploadedFile(upload_file.name, upload_file.read()))
         data = {
