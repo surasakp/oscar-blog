@@ -1,0 +1,52 @@
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <br/>        
+        <div class="row">
+            <div class="col-md-8">
+                <p style="text-align: right">
+                    by {{ post.author.username }} in
+                    {% for category in post.category.all %}
+                        <a href="{% url 'appblog:category-view' category.slug %}">&nbsp;{{ category.name }}</a>
+                    {% endfor %}
+                </p>
+                <h1>{{ post.title }}</h1>
+                <div class="row">
+                    <div class="col-md-9">
+                        <div>
+                            <img src="{{ post.featured_image.url }}" class="img-fluid" width="100%"/>
+                        </div>
+                        <br/>
+                        {{ post.content|safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="well" style="position: fixed;margin-right: 10%;">
+                    <form action="{% url 'appblog:posts-index-view' %}" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search post" name="search">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default"  style="height: 34px;" type="submit" name="action" value="search">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <h3>Categories</h3>
+                    <ul>
+                        {% for category in categories.all %}
+                            <li>
+                                <a href="{% url 'appblog:category-view' category.slug %}">&nbsp;{{ category.name }} ({{ category.get_number_posts }})</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+{% endblock %}
