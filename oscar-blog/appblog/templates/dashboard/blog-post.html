@@ -67,6 +67,9 @@
                                 <li>
                                     <a href="{% url 'blog-dashboard:blog-post-detail-delete' pk=post.id%}">{% trans "Delete" %}</a>
                                 </li>
+                                <li>
+                                    <a href="{% url 'appblog:post-detail-view' slug=post.slug%}">{% trans "View on site" %}</a>
+                                </li>
                             </ul>
                         </div>
                     </div>

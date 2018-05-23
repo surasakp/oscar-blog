@@ -35,14 +35,16 @@
                 {% else %}
                     <p>{% trans "No blog have been made yet." %}</p>
                 {% endif %}
+
+                {% include "partials/pagination.html" %}
             </div>
             <div class="col-md-4">
                 <div class="well" style="position: fixed;margin-right: 10%;">
                     <form action="{% url 'appblog:posts-index-view' %}" method="get">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search post" name="search">
+                            {% include "partials/form_fields.html" with form=form %}
                             <div class="input-group-btn">
-                                <button class="btn btn-default" style="height: 34px;" type="submit" name="action" value="search" >
+                                <button class="btn btn-default" style="height: 34px; margin-top: 5px" type="submit" name="action" value="search" >
                                     <i class="glyphicon glyphicon-search"></i>
                                 </button>
                             </div>

@@ -1,3 +1,5 @@
+import datetime
+
 from oscar.core.compat import AUTH_USER_MODEL
 from oscar.models.fields import AutoSlugField
 
@@ -21,12 +23,16 @@ class AbstractCategory(Timestamp):
     name = models.CharField(max_length=200)
     slug = AutoSlugField(max_length=128, populate_from='name')
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
     @property
     def get_number_posts(self):
-        return AbstractCategoryGroup.objects.filter(category__name=self.name).count()
+        return AbstractCategory.objects.filter(
+            name=self.name, abstractpost__post_date__lte=datetime.date.today()).count()
 
 
 class AbstractPost(Timestamp):
@@ -40,6 +46,9 @@ class AbstractPost(Timestamp):
         AbstractCategory, blank=True, through='AbstractCategoryGroup', verbose_name=_("Category"))
     excerpt = models.TextField(blank=True)
     slug = AutoSlugField(max_length=128, populate_from='title')
+
+    class Meta:
+        ordering = ['-post_date', 'title']
 
     def __str__(self):
         return self.title

@@ -13,7 +13,7 @@ class AppBlog(Application):
 
     def get_urls(self):
         urls = [
-            url(r'^posts/$', self.blog_post_index_view.as_view(), name='posts-index-view'),
+            url(r'^posts/', self.blog_post_index_view.as_view(), name='posts-index-view'),
             url(r'^category/(?P<slug>[\w-]+)/$', self.blog_category_view.as_view(), name='category-view'),
             url(r'^post/detail/(?P<slug>[\w-]+)/$', self.blog_post_detail_view.as_view(), name='post-detail-view'),
         ]

@@ -87,14 +87,17 @@ class BlogPostDetailUpdateView(generic.UpdateView):
         return self.render_to_response(context)
 
     def get_success_url(self):
-        messages.success(self.request, _('save success'))
 
         action = self.request.POST.get('action')
         if action == 'continue':
+            messages.success(self.request, _('save success'))
             url = reverse(
                 'blog-dashboard:blog-post-detail-update', kwargs={"id": self.object.id})
-        else:
+        elif action == 'save':
+            messages.success(self.request, _('save success'))
             url = reverse('blog-dashboard:blog-post-list')
+        else:
+            url = reverse('appblog:post-detail-view', kwargs={'slug': self.object.slug})
         return url
 
 
