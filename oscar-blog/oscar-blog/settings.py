@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'api',
     'appblog',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,7 +49,9 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'compressor',
     'widget_tweaks',
-    'django_nose'
+    'django_nose',
+    'rest_framework',
+    'rest_framework.authtoken'
 ] + get_core_apps([])
 
 APPEND_SLASH = True
@@ -175,3 +178,12 @@ OSCAR_DASHBOARD_NAVIGATION[5]['children'].extend([
         'url_name': 'blog-dashboard:blog-category-list',
     }]
 )
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer'
+    ),
+}
