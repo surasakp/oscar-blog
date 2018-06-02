@@ -148,7 +148,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -162,6 +161,8 @@ HAYSTACK_CONNECTIONS = {
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # append children at menu content on dashboard oscar
 OSCAR_DASHBOARD_NAVIGATION[5]['children'].extend([

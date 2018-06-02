@@ -1,6 +1,6 @@
 *.pyc
 __pycache__/
 appenv/
-oscar-blog/images/
+oscar-blog/media/
 *.png
 .vscode/

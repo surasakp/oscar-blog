@@ -1,0 +1,67 @@
+{% load i18n %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <br/>
+        <div class="row">
+            <div class="col-md-8">
+                <h1>Hello Blogs</h1>
+                <br/>
+                {% if posts %}
+                    {% for post in posts %}
+                        <div class="row">
+                            <div class="col-md-3">&nbsp;
+                                <ul>
+                                    <li>&nbsp;Author : {{ post.author.username}}</li>
+                                    <li>
+                                        {% for category in post.category.all %}
+                                            <a href="{% url 'appblog:category-view' category.slug %}">&nbsp;{{ category.name }}</a>
+                                        {% endfor %}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-9">
+                                <img src="{{ post.featured_image.url }}" class="img-fluid" width="400"/>
+                                <h3><a href="{% url 'appblog:post-detail-view' post.slug  %}">{{ post.title }}</a></h3>
+                                <p>{{ post.excerpt|striptags }}... <a href="{% url 'appblog:post-detail-view' post.slug  %}">Read More</a></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>{% trans "No blog have been made yet." %}</p>
+                {% endif %}
+
+                {% include "partials/pagination.html" %}
+            </div>
+            <div class="col-md-4">
+                <div class="well" style="position: fixed;margin-right: 10%;">
+                    <form action="{% url 'appblog:posts-index-view' %}" method="get">
+                        <div class="input-group">
+                            {% include "partials/form_fields.html" with form=form %}
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" style="height: 34px; margin-top: 5px" type="submit" name="action" value="search" >
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <h3>Categories</h3>
+                    <ul>
+                        {% for category in categories.all %}
+                            <li>
+                                <a href="{% url 'appblog:category-view' category.slug %}">
+                                    &nbsp;{{ category.name }} ({{ category.get_number_posts }})</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+{% endblock %}

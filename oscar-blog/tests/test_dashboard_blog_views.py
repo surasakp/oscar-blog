@@ -1,6 +1,3 @@
-import tempfile
-from PIL import Image
-
 from oscar.core.loading import get_model
 
 from django.test import TestCase, Client
@@ -8,10 +5,14 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from .factories.blogs import (PostFactory, CategoryFactory, CategoryGroupFactory)
+from .util import Util
+
 
 Post = get_model('appblog', 'Post')
 Category = get_model('appblog', 'Category')
 CategoryGroup = get_model('appblog', 'CategoryGroup')
+
+util = Util()
 
 
 class WebTestCase(TestCase):
@@ -41,13 +42,6 @@ class WebTestCase(TestCase):
             username=self.username,
             password=self.password
         )
-
-    def create_image(self):
-        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
-            image = Image.new('RGB', (200, 200), 'white')
-            image.save(f, 'PNG')
-
-        return open(f.name, mode='rb')
 
 
 class TestDashboardPostView(WebTestCase):
@@ -120,7 +114,7 @@ class TestDashboardPostDetailCreateView(WebTestCase):
             'author': self.user.id,
             'excerpt': 'example excerpt',
             'post_date': '2018-03-12',
-            'featured_image': self.create_image(),
+            'featured_image': util.create_image(),
             'categorygroup_set-TOTAL_FORMS': '2',
             'categorygroup_set-INITIAL_FORMS': '0',
             'categorygroup_set-MIN_NUM_FORMS': '1',
@@ -172,7 +166,7 @@ class TestDashboardPostDetailUpdateView(WebTestCase):
             'author': self.user.id,
             'excerpt': 'example excerpt',
             'post_date': '2018-03-12',
-            'featured_image': self.create_image(),
+            'featured_image': util.create_image(),
             'categorygroup_set-TOTAL_FORMS': '2',
             'categorygroup_set-INITIAL_FORMS': '0',
             'categorygroup_set-MIN_NUM_FORMS': '1',

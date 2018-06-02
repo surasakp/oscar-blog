@@ -1,7 +1,9 @@
+import datetime
+
 from oscar.core.compat import AUTH_USER_MODEL
+from oscar.models.fields import AutoSlugField
 
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 # Create your models here.
@@ -19,25 +21,34 @@ class Timestamp(models.Model):
 class AbstractCategory(Timestamp):
 
     name = models.CharField(max_length=200)
+    slug = AutoSlugField(max_length=128, populate_from='name')
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
 
     @property
     def get_number_posts(self):
-        return AbstractCategoryGroup.objects.filter(category__name=self.name).count()
+        return AbstractCategory.objects.filter(
+            name=self.name, abstractpost__post_date__lte=datetime.date.today()).count()
 
 
 class AbstractPost(Timestamp):
 
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)
-    featured_image = models.ImageField(_("Featured Image"), upload_to=settings.OSCAR_IMAGE_FOLDER)
+    featured_image = models.ImageField(_("Featured Image"), upload_to='image')
     post_date = models.DateField(default=timezone.now)
     author = models.ForeignKey(AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE)
     category = models.ManyToManyField(
         AbstractCategory, blank=True, through='AbstractCategoryGroup', verbose_name=_("Category"))
     excerpt = models.TextField(blank=True)
+    slug = AutoSlugField(max_length=128, populate_from='title')
+
+    class Meta:
+        ordering = ['-post_date', 'title']
 
     def __str__(self):
         return self.title

@@ -94,6 +94,11 @@
         {% block fixed_actions_group %}
             <div class="fixed-actions-group">
                 <div class="form-group">
+                    <div class="pull-left">
+                        <button class="btn btn-primary btn-lg" name="action" type="submit" value="view">
+                            {% trans "View on site" %}
+                        </button>
+                    </div>
                     <div class="pull-right">
                         <a href="{% url 'blog-dashboard:blog-post-list' %}">
                             {% trans "Cancel" %}
