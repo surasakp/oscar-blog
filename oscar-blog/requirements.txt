@@ -7,3 +7,4 @@ django-compressor
 flake8
 ipython
 django-nose
+djangorestframework
